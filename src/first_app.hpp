@@ -12,8 +12,7 @@ namespace lve {
       static constexpr int height = 600;
       Window window{ width, height, "Hello Vulkan!" };
 
-      // TODO: absolute paths in the code
-      Pipeline pipeline{ "build/shaders/simple_shader.vert.spv", "build/shaders/simple_shader.frag.spv" };
+      Pipeline pipeline{ "assets/shaders/simple_shader.vert.spv", "assets/shaders/simple_shader.frag.spv" };
 
     public:
 

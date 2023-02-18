@@ -6,8 +6,8 @@ a.out: shaders src/*.cpp src/*.hpp
 	g++ $(CFLAGS) src/*.cpp $(LDFLAGS) -o $@
 
 shaders:
-	glslc src/shaders/simple_shader.vert -o build/shaders/simple_shader.vert.spv
-	glslc src/shaders/simple_shader.frag -o build/shaders/simple_shader.frag.spv
+	glslc src/shaders/simple_shader.vert -o assets/shaders/simple_shader.vert.spv
+	glslc src/shaders/simple_shader.frag -o assets/shaders/simple_shader.frag.spv
 
 .PHONY: test clean
 

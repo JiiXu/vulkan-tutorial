@@ -1,5 +1,7 @@
 #include "window.hpp"
 
+#include <stdexcept>
+
 namespace lve {
 
   Window::Window( int _width, int _height, std::string _windowName )
@@ -14,6 +16,20 @@ namespace lve {
 
     glfwDestroyWindow( window );
     glfwTerminate();
+
+  }
+
+
+  void Window::createWindowSurface( VkInstance instance, VkSurfaceKHR* surface ) {
+
+    // note: the nullptr here is an "allocator callback"
+    if ( glfwCreateWindowSurface( instance, window, nullptr, surface ) != VK_SUCCESS ) {
+
+      throw std::runtime_error( "failed to create window surface" );
+
+    }
+
+
 
   }
 

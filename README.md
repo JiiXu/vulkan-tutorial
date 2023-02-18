@@ -4,7 +4,10 @@ I am following a vulkan tutorial on youtube, found [here](https://www.youtube.co
 There are some coding style things that I don't agree with, and sometimes I'll change things depending on my own feelings.
 
 ## Video 1 - Introduction 
-No notes; pretty simple stuff, create a window etc. Good start!
+No notes; they set up a build environment using vscode on macos which I am not going to use.
+
+## Video 2 - Create a Window
+We created a window for our thing to live in!
 
 ## Video 2 - Graphics Pipeline Overview
 Learned about the graphics pipeline, which parts of it are configurable and what a shader is. Implemented and compiled an extremely simple shader using glsl.

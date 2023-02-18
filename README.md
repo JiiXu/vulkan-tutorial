@@ -6,10 +6,17 @@ There are some coding style things that I don't agree with, and sometimes I'll c
 ## Video 1
 No notes; pretty simple stuff, create a window etc. Good start!
 
+## Video 2
+Learned about the graphics pipeline, which parts of it are configurable and what a shader is. Implemented and compiled an extremely simple shader using glsl.
+
+![Screendump from youtube showing an outline of a graphics pipeline](assets/readme/pipeline.png)
+
+Very interesting! I'm excited to learn more about all of this stuff, we'll see when the anxiety and/or ADHD hits 😅
+
 ## Roadmap
 
 - [x] Video 1 - Introduction
-- [ ] Video 2
+- [x] Video 2 - Shaders and graphics pipeline
 - [ ] Video 3
 - [ ] Video 4
 - [ ] Video 5

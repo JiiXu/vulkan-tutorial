@@ -15,6 +15,6 @@ test: a.out
 	./a.out
 
 clean:
-	rm -f a.out
+	rm -f a.out build/*.o build/shaders/*.spv
 
 $(shell mkdir -p $(DIRS))

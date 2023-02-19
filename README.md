@@ -24,7 +24,9 @@ Configured the fixed function pipeline stages. The configuration pattern of crea
 
 I also figured out a game I might want to make! More on that in another repo. Maybe.
 
-## Roadmap
+## Progress
+
+![](https://geps.dev/progress/13)
 
 - [x] Video 1 - Introduction
 - [x] Video 2 - Graphics Pipeline Overview

@@ -29,7 +29,7 @@ I also figured out a game I might want to make! More on that in another repo. Ma
 - [x] Video 1 - Introduction
 - [x] Video 2 - Graphics Pipeline Overview
 - [x] Video 3 - Device Setup
-- [x] Video 4
+- [x] Video 4 - Fixed Function Pipeline Stages
 - [ ] Video 5
 - [ ] Video 6
 - [ ] Video 7

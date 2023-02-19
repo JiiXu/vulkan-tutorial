@@ -19,12 +19,17 @@ Very interesting! I'm excited to learn more about all of this stuff, we'll see w
 ## Video 3 - Device Setup
 Learned how to contact the graphics device, and set up a kind of interface (?) to it. This video was hard to grok, partly because it relied on downloading a bunch of boilerplate code. I do think is the right call by mr Galea (the author of the tutorial series) because there was quite a bit of it and doing all of this setup was already a bit challenging. It is also a bit tricky to keep track of all the components since it isn't trivial to understand how they will all interact in the final product.
 
+## Video 4 - Fixed Function Pipeline Stages
+Configured the fixed function pipeline stages. The configuration pattern of creating structs and passing them to Vulkan is a bit foreign but intuitive - I wish the tutorial would have taken the time to explain the division of responsibility a bit more here, it feels as though we're setting up something that is the way we want it but skipping past the naïve approach of just hard-setting things first. Maybe things will become a bit clearer, but this video was a lot of typing with a bit less understanding even though I looked up the concepts and skipped back whenever I missed something.
+
+I also figured out a game I might want to make! More on that in another repo. Maybe.
+
 ## Roadmap
 
 - [x] Video 1 - Introduction
 - [x] Video 2 - Graphics Pipeline Overview
 - [x] Video 3 - Device Setup
-- [ ] Video 4
+- [x] Video 4
 - [ ] Video 5
 - [ ] Video 6
 - [ ] Video 7

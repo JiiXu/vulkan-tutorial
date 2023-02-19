@@ -9,6 +9,21 @@ namespace lve {
 
   struct PipelineConfigInfo {
 
+    VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
+
+    // grabbed wholesale from a pastebin; no idea what these mean for now
+    VkViewport viewport;
+    VkRect2D scissor;
+    VkPipelineViewportStateCreateInfo viewportInfo;
+    VkPipelineRasterizationStateCreateInfo rasterizationInfo;
+    VkPipelineMultisampleStateCreateInfo multisampleInfo;
+    VkPipelineColorBlendAttachmentState colorBlendAttachment;
+    VkPipelineColorBlendStateCreateInfo colorBlendInfo;
+    VkPipelineDepthStencilStateCreateInfo depthStencilInfo;
+    VkPipelineLayout pipelineLayout = nullptr;
+    VkRenderPass renderPass = nullptr;
+    uint32_t subpass = 0;
+
   };
 
   class Pipeline {
@@ -32,7 +47,7 @@ namespace lve {
     public:
 
       Pipeline( Device&, const std::string&, const std::string&, const PipelineConfigInfo& );
-      ~Pipeline() {};
+      ~Pipeline();
       Pipeline( const Pipeline& ) = delete;
       Pipeline( const Pipeline&& ) = delete;
 

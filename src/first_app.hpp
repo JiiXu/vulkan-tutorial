@@ -1,6 +1,10 @@
 #pragma once
 
+#include <memory>
+#include <vector>
+
 #include "pipeline.hpp"
+#include "swap_chain.hpp"
 #include "window.hpp"
 
 namespace lve {
@@ -12,12 +16,23 @@ class FirstApp {
   Window window{ width, height, "Hello Vulkan!" };
 
   Device device{ window };
+  SwapChain swapChain{ device, window.getExtent() };
 
-  Pipeline pipeline{ device, "assets/shaders/simple_shader.vert.spv",
-                     "assets/shaders/simple_shader.frag.spv",
-                     Pipeline::defaultPipelineConfigInfo( width, height ) };
+  std::unique_ptr< Pipeline > pipeline;
+  VkPipelineLayout pipelineLayout;
+  std::vector< VkCommandBuffer > commandBuffers;
+
+  void createPipelineLayout();
+  void createPipeline();
+  void createCommandBuffers();
+  void drawFrame();
 
  public:
+  FirstApp();
+  ~FirstApp();
+  FirstApp( const FirstApp& ) = delete;
+  FirstApp& operator=( const FirstApp& ) = delete;
+
   void run();
 };
 

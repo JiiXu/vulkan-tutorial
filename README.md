@@ -24,6 +24,9 @@ Configured the fixed function pipeline stages. The configuration pattern of crea
 
 I also figured out a game I might want to make! More on that in another repo. Maybe.
 
+## Video 5 - Swap Chain Overview
+I now understand a tiny bit about swap chains, image buffers and difference image buffer modes - or at least the existence of them. All the errors are now gone, and the code opens... an empty window! Yay!
+
 ## Progress
 
 ![](https://geps.dev/progress/13)
@@ -32,7 +35,7 @@ I also figured out a game I might want to make! More on that in another repo. Ma
 - [x] Video 2 - Graphics Pipeline Overview
 - [x] Video 3 - Device Setup
 - [x] Video 4 - Fixed Function Pipeline Stages
-- [ ] Video 5
+- [x] Video 5 - Swap Chain Overview
 - [ ] Video 6
 - [ ] Video 7
 - [ ] Video 8

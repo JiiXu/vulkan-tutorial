@@ -29,7 +29,7 @@ I now understand a tiny bit about swap chains, image buffers and difference imag
 
 ## Progress
 
-![](https://geps.dev/progress/13)
+![](https://geps.dev/progress/16)
 
 - [x] Video 1 - Introduction
 - [x] Video 2 - Graphics Pipeline Overview

@@ -1,0 +1,21 @@
+﻿---
+BasedOnStyle: Google
+AlignAfterOpenBracket: AlwaysBreak
+CompactNamespaces: 'false'
+Cpp11BracedListStyle: 'false'
+IndentCaseLabels: 'true'
+IndentWidth: '2'
+PointerAlignment: Left
+SortUsingDeclarations: 'true'
+SpaceAfterCStyleCast: 'false'
+SpaceAfterLogicalNot: 'false'
+SpaceAfterTemplateKeyword: 'false'
+SpaceBeforeParens: ControlStatements
+SpaceBeforeRangeBasedForLoopColon: 'false'
+SpacesInAngles: 'true'
+SpacesInCStyleCastParentheses: 'false'
+SpacesInParentheses: 'true'
+SpacesInSquareBrackets: 'false'
+TabWidth: '2'
+
+...

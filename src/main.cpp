@@ -1,12 +1,11 @@
-#include "first_app.hpp"
-
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
 
-int main( int argc, char** argv ) {
+#include "first_app.hpp"
 
-  lve::FirstApp app {};
+int main( int argc, char** argv ) {
+  lve::FirstApp app{};
 
   try {
     app.run();
@@ -16,5 +15,4 @@ int main( int argc, char** argv ) {
   }
 
   return EXIT_SUCCESS;
-
 }

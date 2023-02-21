@@ -1,35 +1,30 @@
 #pragma once
 
-#define GLFW_INCLUDE_VULKAN 
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
 #include <string>
 
-namespace lve
-{
+namespace lve {
 
-  class Window {
+class Window {
+ private:
+  void initWindow();
 
-    private:
+  const int height;
+  const int width;
 
-      void initWindow();
+  std::string windowName;
 
-      const int height;
-      const int width;
+  GLFWwindow* window;
 
-      std::string windowName;
+ public:
+  Window( int, int, std::string );
+  ~Window();
 
-      GLFWwindow* window;
+  bool shouldClose() { return glfwWindowShouldClose( window ); }
 
-    public:
+  void createWindowSurface( VkInstance, VkSurfaceKHR* );
+};
 
-      Window( int, int, std::string );
-      ~Window();
-
-      bool shouldClose() { return glfwWindowShouldClose( window ); }
-
-      void createWindowSurface( VkInstance, VkSurfaceKHR* );
-  };
-
-}
-
+}  // namespace lve

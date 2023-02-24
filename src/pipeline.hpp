@@ -49,5 +49,6 @@ class Pipeline {
   Pipeline( const Pipeline&& ) = delete;
 
   static PipelineConfigInfo defaultPipelineConfigInfo( uint32_t, uint32_t );
+  void bind( VkCommandBuffer );
 };
 }  // namespace lve

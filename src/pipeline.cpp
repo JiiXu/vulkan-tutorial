@@ -225,4 +225,10 @@ PipelineConfigInfo Pipeline::defaultPipelineConfigInfo(
   return configInfo;
 }
 
+void Pipeline::bind( VkCommandBuffer commandBuffer ) {
+  // GRAPHICS as opposed to COMPUTE or RAYTRACE
+  vkCmdBindPipeline(
+      commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline );
+}
+
 }  // namespace lve

@@ -27,16 +27,19 @@ I also figured out a game I might want to make! More on that in another repo. Ma
 ## Video 5 - Swap Chain Overview
 I now understand a tiny bit about swap chains, image buffers and difference image buffer modes - or at least the existence of them. All the errors are now gone, and the code opens... an empty window! Yay!
 
+## Video 6 - Command Buffers Overview
+Most of this may have gone over my head; command buffers are a way of structuring commands in our calls to the GPU, and "recording" commands so that they can be reused on subsequent passes. At the end, at least we drew a red triangle! Then changed it to be magenta.
+
 ## Progress
 
-![](https://geps.dev/progress/16)
+![](https://geps.dev/progress/17)
 
 - [x] Video 1 - Introduction
 - [x] Video 2 - Graphics Pipeline Overview
 - [x] Video 3 - Device Setup
 - [x] Video 4 - Fixed Function Pipeline Stages
 - [x] Video 5 - Swap Chain Overview
-- [ ] Video 6
+- [x] Video 6 - Command Buffers Overview
 - [ ] Video 7
 - [ ] Video 8
 - [ ] Video 9

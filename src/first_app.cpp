@@ -1,5 +1,6 @@
 #include "first_app.hpp"
 
+#include <array>
 #include <stdexcept>
 
 namespace lve {
@@ -7,6 +8,12 @@ namespace lve {
 void FirstApp::run() {
   while ( !window.shouldClose() ) {
     glfwPollEvents();
+    drawFrame();
+
+    // this line avoids having a crash on exit from the window should we close
+    // it during a renderPass
+    vkDeviceWaitIdle( device.device() );
+
   }
 }
 
@@ -34,9 +41,8 @@ void FirstApp::createPipelineLayout() {
 
   if ( vkCreatePipelineLayout(
            device.device(), &pipelineLayoutInfo, nullptr, &pipelineLayout ) !=
-       VK_SUCCESS ) {
+       VK_SUCCESS )
     throw std::runtime_error( "Failed to create pipeline layout" );
-  }
 }
 
 void FirstApp::createPipeline() {
@@ -50,8 +56,82 @@ void FirstApp::createPipeline() {
       "assets/shaders/simple_shader.frag.spv", pipelineConfig );
 }
 
-void FirstApp::createCommandBuffers() {}
+void FirstApp::createCommandBuffers() {
+  // resize the commandBuffers vector to have as many as we have framebuffers
+  // (most probably 2 or 3)
+  commandBuffers.resize( swapChain.imageCount() );
 
-void FirstApp::drawFrame() {}
+  VkCommandBufferAllocateInfo allocInfo{};
+  allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+  // command buffers can be primary or secondary; primary buffers can be
+  // submitted to a queue for execution but cannot be called by secondary
+  // command buffers, and vice versa
+  allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+
+  // command pools are opaque objects from which memory is allocated to
+  // command buffers
+  allocInfo.commandPool = device.getCommandPool();
+
+  allocInfo.commandBufferCount =
+      static_cast< uint32_t >( commandBuffers.size() );
+
+  if ( vkAllocateCommandBuffers(
+           device.device(), &allocInfo, commandBuffers.data() ) != VK_SUCCESS )
+    throw std::runtime_error( "failed to initialize commandbuffers" );
+
+  for ( int i = 0; i < commandBuffers.size(); ++i ) {
+    VkCommandBufferBeginInfo beginInfo{};
+    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+    if ( vkBeginCommandBuffer( commandBuffers[i], &beginInfo ) != VK_SUCCESS )
+      throw std::runtime_error( "command buffer failed to begin recording" );
+
+    VkRenderPassBeginInfo renderPassInfo{};
+    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    renderPassInfo.renderPass = swapChain.getRenderPass();
+    renderPassInfo.framebuffer = swapChain.getFrameBuffer( i );
+    renderPassInfo.renderArea.offset = { 0, 0 };
+    renderPassInfo.renderArea.extent = swapChain.getSwapChainExtent();
+
+    std::array< VkClearValue, 2 > clearValues{};
+    clearValues[0].color = { 0.1f, 0.1f, 0.1f, 0.1f };
+    clearValues[1].depthStencil = { 1.f, 0 };
+    renderPassInfo.clearValueCount =
+        static_cast< uint32_t >( clearValues.size() );
+    renderPassInfo.pClearValues = clearValues.data();
+
+    // VK_SUBPASS_CONTENTS_INLINE somehow signals that no secondary command
+    // buffers will be used for secondary commands. The alternative is
+    // VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS that signifies use of
+    // secondary command buffers to execute secondary commands
+    vkCmdBeginRenderPass(
+        commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE );
+
+    pipeline->bind( commandBuffers[i] );
+
+    // draw three vertices and one instance; instances are used to draw multiple
+    // instances of the same vertex e.g. in particle systems. 0,0 is the offset.
+    vkCmdDraw( commandBuffers[i], 3, 1, 0, 0 );
+
+    vkCmdEndRenderPass( commandBuffers[i] );
+
+    if ( vkEndCommandBuffer( commandBuffers[i] ) != VK_SUCCESS )
+      throw std::runtime_error( "failed to record command buffer" );
+  }
+}
+
+void FirstApp::drawFrame() {
+  uint32_t imageIndex;
+  auto result = swapChain.acquireNextImage( &imageIndex );
+
+  if ( result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR )
+    throw std::runtime_error( "failed to acquire swapchain image" );
+
+  result = swapChain.submitCommandBuffers(
+      &commandBuffers[imageIndex], &imageIndex );
+
+  if ( result != VK_SUCCESS )
+    throw std::runtime_error( "failed to submit command buffers" );
+}
 
 }  // namespace lve

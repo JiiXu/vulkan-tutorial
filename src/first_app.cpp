@@ -95,7 +95,7 @@ void FirstApp::createCommandBuffers() {
     renderPassInfo.renderArea.extent = swapChain.getSwapChainExtent();
 
     std::array< VkClearValue, 2 > clearValues{};
-    clearValues[0].color = { 0.1f, 0.1f, 0.1f, 0.1f };
+    clearValues[0].color = { 0.f, 0.f, 0.f, 0.f };
     clearValues[1].depthStencil = { 1.f, 0 };
     renderPassInfo.clearValueCount =
         static_cast< uint32_t >( clearValues.size() );
@@ -151,11 +151,15 @@ std::vector< Model::Triangle > FirstApp::sierpinskiSplit( Model::Triangle t ) {
   float cay = ( cy + ay ) / 2;
 
   return std::vector< Model::Triangle >{
-
-    { { { ax, ay } }, { { abx, aby } }, { { cax, cay } } },
-    { { { abx, aby } }, { { bx, by } }, { { bcx, bcy } } },
-    { { { cax, cay } }, { { bcx, bcy } }, { { cx, cy } } }
-
+    { { { ax, ay }, { 0.f, 0.5f, 0.5f } },
+      { { abx, aby }, { 0.f, 1.f, 0.f } },
+      { { cax, cay }, { 0.f, 0.f, 1.f } } },
+    { { { abx, aby }, { 0.f, 0.5f, 0.5f } },
+      { { bx, by }, { 0.f, 1.f, 0.f } },
+      { { bcx, bcy }, { 0.f, 0.f, 1.f } } },
+    { { { cax, cay }, { 0.f, 0.5f, 0.5f } },
+      { { bcx, bcy }, { 0.f, 1.f, 0.f } },
+      { { cx, cy }, { 0.f, 0.f, 1.f } } }
   };
 }
 
@@ -177,17 +181,20 @@ std::vector< Model::Triangle > FirstApp::sierpinski(
 
 void FirstApp::loadModels() {
   std::vector< Model::Triangle > initialTriangle{
+
     { { { 0.f, -0.5f } }, { { 0.5f, 0.8f } }, { { -0.7f, 0.5f } } }
   };
 
   std::vector< Model::Triangle > triangles = sierpinski( 3, initialTriangle );
-
   std::vector< Model::Vertex > vertices( triangles.size() * 3 );
+
   int j = 0;
   for ( int i = 0; i < triangles.size(); ++i ) {
+    // positions
     vertices[j] = triangles[i].a;
     vertices[j + 1] = triangles[i].b;
     vertices[j + 2] = triangles[i].c;
+
     j += 3;
   }
 

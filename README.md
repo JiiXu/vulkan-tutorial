@@ -34,9 +34,12 @@ Most of this may have gone over my head; command buffers are a way of structurin
 Vertex buffers are groups of vertex attributes, where different vertex attributes (position, RGB values etc) are placed in buffers. We must "bind" vertex buffers descriptions to the graphics pipeline, defining stride etc. This is done in a "Vertex Attribute Description" that contains the binding, location, offset and format. Whether buffers should be interleaved or separate, depends on the implementation.
 In this tutorial, we will allocate memory ourselves - that's to do with all the `nullptr` we've been passing in everywhere. But for serious projects, one probably wants to use a memory allocation library such as VMA.
 
+## Video 8 - Fragment Interpolation
+We looked at how data is passed from vertex shaders to fragment shaders, and colored our fractal triangles in!
+
 ## Progress
 
-![](https://geps.dev/progress/17)
+![](https://geps.dev/progress/27)
 
 - [x] Video 1 - Introduction
 - [x] Video 2 - Graphics Pipeline Overview
@@ -45,7 +48,7 @@ In this tutorial, we will allocate memory ourselves - that's to do with all the 
 - [x] Video 5 - Swap Chain Overview
 - [x] Video 6 - Command Buffers Overview
 - [x] Video 7 - Vertex Buffers
-- [ ] Video 8
+- [x] Video 8 - Fragment Interpolation
 - [ ] Video 9
 - [ ] Video 10
 - [ ] Video 11

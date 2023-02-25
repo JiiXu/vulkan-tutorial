@@ -13,11 +13,11 @@ void FirstApp::run() {
     // this line avoids having a crash on exit from the window should we close
     // it during a renderPass
     vkDeviceWaitIdle( device.device() );
-
   }
 }
 
 FirstApp::FirstApp() {
+  loadModels();
   createPipelineLayout();
   createPipeline();
   createCommandBuffers();
@@ -57,6 +57,7 @@ void FirstApp::createPipeline() {
 }
 
 void FirstApp::createCommandBuffers() {
+
   // resize the commandBuffers vector to have as many as we have framebuffers
   // (most probably 2 or 3)
   commandBuffers.resize( swapChain.imageCount() );
@@ -109,18 +110,19 @@ void FirstApp::createCommandBuffers() {
 
     pipeline->bind( commandBuffers[i] );
 
-    // draw three vertices and one instance; instances are used to draw multiple
-    // instances of the same vertex e.g. in particle systems. 0,0 is the offset.
-    vkCmdDraw( commandBuffers[i], 3, 1, 0, 0 );
+    model->bind( commandBuffers[i] );
+    model->draw( commandBuffers[i] );
 
     vkCmdEndRenderPass( commandBuffers[i] );
 
     if ( vkEndCommandBuffer( commandBuffers[i] ) != VK_SUCCESS )
       throw std::runtime_error( "failed to record command buffer" );
   }
+
 }
 
 void FirstApp::drawFrame() {
+
   uint32_t imageIndex;
   auto result = swapChain.acquireNextImage( &imageIndex );
 
@@ -132,6 +134,17 @@ void FirstApp::drawFrame() {
 
   if ( result != VK_SUCCESS )
     throw std::runtime_error( "failed to submit command buffers" );
+}
+
+
+void FirstApp::loadModels() {
+
+  std::vector< Model::Vertex > vertices{ { { 0.f, -0.5f } },
+                                         { { 0.5f, 0.5f } },
+                                         { { -0.5f, 0.5f } } };
+
+  model = std::make_unique< Model >( device, vertices );
+
 }
 
 }  // namespace lve

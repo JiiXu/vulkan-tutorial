@@ -30,6 +30,10 @@ I now understand a tiny bit about swap chains, image buffers and difference imag
 ## Video 6 - Command Buffers Overview
 Most of this may have gone over my head; command buffers are a way of structuring commands in our calls to the GPU, and "recording" commands so that they can be reused on subsequent passes. At the end, at least we drew a red triangle! Then changed it to be magenta.
 
+## Video 7 - Vertex Buffers
+Vertex buffers are groups of vertex attributes, where different vertex attributes (position, RGB values etc) are placed in buffers. We must "bind" vertex buffers descriptions to the graphics pipeline, defining stride etc. This is done in a "Vertex Attribute Description" that contains the binding, location, offset and format. Whether buffers should be interleaved or separate, depends on the implementation.
+In this tutorial, we will allocate memory ourselves - that's to do with all the `nullptr` we've been passing in everywhere. But for serious projects, one probably wants to use a memory allocation library such as VMA.
+
 ## Progress
 
 ![](https://geps.dev/progress/17)
@@ -40,7 +44,7 @@ Most of this may have gone over my head; command buffers are a way of structurin
 - [x] Video 4 - Fixed Function Pipeline Stages
 - [x] Video 5 - Swap Chain Overview
 - [x] Video 6 - Command Buffers Overview
-- [ ] Video 7
+- [x] Video 7 - Vertex Buffers
 - [ ] Video 8
 - [ ] Video 9
 - [ ] Video 10

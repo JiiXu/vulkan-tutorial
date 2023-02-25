@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 
+#include "model.hpp"
 #include "pipeline.hpp"
 #include "swap_chain.hpp"
 #include "window.hpp"
@@ -17,7 +18,7 @@ class FirstApp {
 
   Device device{ window };
   SwapChain swapChain{ device, window.getExtent() };
-
+  std::unique_ptr< Model > model;
   std::unique_ptr< Pipeline > pipeline;
   VkPipelineLayout pipelineLayout;
   std::vector< VkCommandBuffer > commandBuffers;
@@ -26,6 +27,7 @@ class FirstApp {
   void createPipeline();
   void createCommandBuffers();
   void drawFrame();
+  void loadModels();
 
  public:
   FirstApp();
@@ -34,6 +36,7 @@ class FirstApp {
   FirstApp& operator=( const FirstApp& ) = delete;
 
   void run();
+
 };
 
 }  // namespace lve

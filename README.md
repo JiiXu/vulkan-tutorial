@@ -64,5 +64,4 @@ Most of this may have gone over my head; command buffers are a way of structurin
 - [ ] Video 28
 - [ ] Video 29
 - [ ] Video 30
-- [ ] Video 31
 

@@ -20,6 +20,14 @@ class Model {
     getAttributeDescriptions();
   };
 
+  struct Triangle {
+    Vertex a;
+    Vertex b;
+    Vertex c;
+
+    std::vector< Vertex > getVertices();
+  };
+
   Model( Device&, std::vector< Vertex >& );
   ~Model();
   Model( const Model& ) = delete;

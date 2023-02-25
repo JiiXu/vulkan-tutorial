@@ -72,4 +72,8 @@ Model::Vertex::getAttributeDescriptions() {
   return attributeDescriptions;
 }
 
+std::vector< Model::Vertex > Model::Triangle::getVertices() {
+  return std::vector< Model::Vertex >{ a, b, c };
+}
+
 }  // namespace lve

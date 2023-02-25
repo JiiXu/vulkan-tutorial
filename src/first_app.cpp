@@ -1,6 +1,7 @@
 #include "first_app.hpp"
 
 #include <array>
+#include <set>
 #include <stdexcept>
 
 namespace lve {
@@ -57,7 +58,6 @@ void FirstApp::createPipeline() {
 }
 
 void FirstApp::createCommandBuffers() {
-
   // resize the commandBuffers vector to have as many as we have framebuffers
   // (most probably 2 or 3)
   commandBuffers.resize( swapChain.imageCount() );
@@ -118,11 +118,9 @@ void FirstApp::createCommandBuffers() {
     if ( vkEndCommandBuffer( commandBuffers[i] ) != VK_SUCCESS )
       throw std::runtime_error( "failed to record command buffer" );
   }
-
 }
 
 void FirstApp::drawFrame() {
-
   uint32_t imageIndex;
   auto result = swapChain.acquireNextImage( &imageIndex );
 
@@ -136,15 +134,64 @@ void FirstApp::drawFrame() {
     throw std::runtime_error( "failed to submit command buffers" );
 }
 
+std::vector< Model::Triangle > FirstApp::sierpinskiSplit( Model::Triangle t ) {
+  float ax = t.a.position.x;
+  float ay = t.a.position.y;
+  float bx = t.b.position.x;
+  float by = t.b.position.y;
+  float cx = t.c.position.x;
+  float cy = t.c.position.y;
+
+  // calculate midpoints
+  float abx = ( ax + bx ) / 2;
+  float aby = ( ay + by ) / 2;
+  float bcx = ( bx + cx ) / 2;
+  float bcy = ( by + cy ) / 2;
+  float cax = ( cx + ax ) / 2;
+  float cay = ( cy + ay ) / 2;
+
+  return std::vector< Model::Triangle >{
+
+    { { { ax, ay } }, { { abx, aby } }, { { cax, cay } } },
+    { { { abx, aby } }, { { bx, by } }, { { bcx, bcy } } },
+    { { { cax, cay } }, { { bcx, bcy } }, { { cx, cy } } }
+
+  };
+}
+
+std::vector< Model::Triangle > FirstApp::sierpinski(
+    unsigned char depth, std::vector< Model::Triangle > triangles ) {
+  if ( depth == 0 ) return triangles;
+
+  // this allocates a bunch of memory just to keep the original triangles out of
+  // the final set
+  std::vector< Model::Triangle > out;
+
+  for ( auto triangle: triangles ) {
+    std::vector< Model::Triangle > newTriangles = sierpinskiSplit( triangle );
+    out.insert( out.begin(), newTriangles.begin(), newTriangles.end() );
+  }
+
+  return sierpinski( depth - 1, out );
+}
 
 void FirstApp::loadModels() {
+  std::vector< Model::Triangle > initialTriangle{
+    { { { 0.f, -0.5f } }, { { 0.5f, 0.8f } }, { { -0.7f, 0.5f } } }
+  };
 
-  std::vector< Model::Vertex > vertices{ { { 0.f, -0.5f } },
-                                         { { 0.5f, 0.5f } },
-                                         { { -0.5f, 0.5f } } };
+  std::vector< Model::Triangle > triangles = sierpinski( 3, initialTriangle );
+
+  std::vector< Model::Vertex > vertices( triangles.size() * 3 );
+  int j = 0;
+  for ( int i = 0; i < triangles.size(); ++i ) {
+    vertices[j] = triangles[i].a;
+    vertices[j + 1] = triangles[i].b;
+    vertices[j + 2] = triangles[i].c;
+    j += 3;
+  }
 
   model = std::make_unique< Model >( device, vertices );
-
 }
 
 }  // namespace lve

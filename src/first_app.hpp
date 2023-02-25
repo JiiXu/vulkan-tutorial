@@ -29,6 +29,10 @@ class FirstApp {
   void drawFrame();
   void loadModels();
 
+  std::vector< Model::Triangle > sierpinskiSplit( Model::Triangle );
+  std::vector< Model::Triangle > sierpinski(
+      unsigned char, std::vector< Model::Triangle > );
+
  public:
   FirstApp();
   ~FirstApp();
@@ -36,7 +40,6 @@ class FirstApp {
   FirstApp& operator=( const FirstApp& ) = delete;
 
   void run();
-
 };
 
 }  // namespace lve

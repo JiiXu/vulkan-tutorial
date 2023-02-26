@@ -35,7 +35,8 @@ Vertex buffers are groups of vertex attributes, where different vertex attribute
 In this tutorial, we will allocate memory ourselves - that's to do with all the `nullptr` we've been passing in everywhere. But for serious projects, one probably wants to use a memory allocation library such as VMA.
 
 ## Video 8 - Fragment Interpolation
-We looked at how data is passed from vertex shaders to fragment shaders, and colored our fractal triangles in!
+We looked at how data is passed from vertex shaders to fragment shaders, and colored our fractal triangles in! Oh yeah; as an optional exercise I created a sierpinski triangle generator. I'm actually fairly proud of being able to code it straight up and have it work straight away, even though it's basically CS Bachelor BS 🤓
+![An image showing a sierpinski triangle in nice turquoise colors](assets/readme/sierpinski.png)
 
 ## Video 9 - Swap Chain Recreation & Dynamic Viewports
 In order for the program not to crash on resizing the window, a more robust swap chain logic was implemented.

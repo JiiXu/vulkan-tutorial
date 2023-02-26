@@ -37,9 +37,17 @@ In this tutorial, we will allocate memory ourselves - that's to do with all the 
 ## Video 8 - Fragment Interpolation
 We looked at how data is passed from vertex shaders to fragment shaders, and colored our fractal triangles in!
 
+## Video 9 - Swap Chain Recreation & Dynamic Viewports
+In order for the program not to crash on resizing the window, a more robust swap chain logic was implemented.
+1. The window now detects when it's being resized, and waits idle for the resizing to be done before resuming so that it does not crash due to the swap chain being dependent on the window dimensions
+2. The program now checks if the swap chain is still valid and recreates it if it isn't due to window resizing
+3. The viewport and scissor are now dynamic so that the graphics pipeline is no longer dependent on swapchain dimensions.
+
+This video was easier to follow, but my overview of the code is still pretty poor. I should probably sit down and go through it all at some point, but I keep feeling like the tutorial creator said we would do that in a video so I guess I'm waiting for that to happen in hopes of there being some visual aids to remind me what's been going on.
+
 ## Progress
 
-![](https://geps.dev/progress/27)
+![](https://geps.dev/progress/30)
 
 - [x] Video 1 - Introduction
 - [x] Video 2 - Graphics Pipeline Overview
@@ -49,7 +57,7 @@ We looked at how data is passed from vertex shaders to fragment shaders, and col
 - [x] Video 6 - Command Buffers Overview
 - [x] Video 7 - Vertex Buffers
 - [x] Video 8 - Fragment Interpolation
-- [ ] Video 9
+- [x] Video 9 - Swap Chain Recreation & Dynamic Viewports
 - [ ] Video 10
 - [ ] Video 11
 - [ ] Video 12

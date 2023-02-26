@@ -1,22 +1,25 @@
 #pragma once
 
+#include "device.hpp"
+
 #include <string>
 #include <vector>
-
-#include "device.hpp"
 
 namespace lve {
 
 struct PipelineConfigInfo {
-  VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
+  PipelineConfigInfo( const PipelineConfigInfo& ) = delete;
+  PipelineConfigInfo& operator=( const PipelineConfigInfo& ) = delete;
 
-  VkViewport viewport;
-  VkRect2D scissor;
+  VkPipelineViewportStateCreateInfo viewportInfo;
+  VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
   VkPipelineRasterizationStateCreateInfo rasterizationInfo;
   VkPipelineMultisampleStateCreateInfo multisampleInfo;
   VkPipelineColorBlendAttachmentState colorBlendAttachment;
   VkPipelineColorBlendStateCreateInfo colorBlendInfo;
   VkPipelineDepthStencilStateCreateInfo depthStencilInfo;
+  std::vector< VkDynamicState > dynamicStateEnables;
+  VkPipelineDynamicStateCreateInfo dynamicStateInfo;
   VkPipelineLayout pipelineLayout = nullptr;
   VkRenderPass renderPass = nullptr;
   uint32_t subpass = 0;
@@ -48,7 +51,7 @@ class Pipeline {
   Pipeline( const Pipeline& ) = delete;
   Pipeline& operator=( const Pipeline& ) = delete;
 
-  static PipelineConfigInfo defaultPipelineConfigInfo( uint32_t, uint32_t );
+  static void defaultPipelineConfigInfo( PipelineConfigInfo& );
   void bind( VkCommandBuffer );
 };
 }  // namespace lve

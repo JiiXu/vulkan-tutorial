@@ -1,12 +1,12 @@
 #pragma once
 
-#include <memory>
-#include <vector>
-
 #include "model.hpp"
 #include "pipeline.hpp"
 #include "swap_chain.hpp"
 #include "window.hpp"
+
+#include <memory>
+#include <vector>
 
 namespace lve {
 
@@ -26,6 +26,7 @@ class FirstApp {
   void createPipelineLayout();
   void createPipeline();
   void createCommandBuffers();
+  void freeCommandBuffers();
   void drawFrame();
   void loadModels();
 

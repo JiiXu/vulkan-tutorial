@@ -38,17 +38,15 @@ void Window::initWindow() {
       glfwCreateWindow( width, height, windowName.c_str(), nullptr, nullptr );
   glfwSetWindowUserPointer( window, this );
   glfwSetFramebufferSizeCallback( window, framebufferResizeCallback );
-
 }
 
 void Window::framebufferResizeCallback(
-  GLFWwindow* window, int width, int height ) {
-
-  auto resizedWindow = static_cast< Window* >( glfwGetWindowUserPointer( window ) );
+    GLFWwindow* window, int width, int height ) {
+  auto resizedWindow =
+      static_cast< Window* >( glfwGetWindowUserPointer( window ) );
   resizedWindow->windowResized = true;
   resizedWindow->width = width;
   resizedWindow->height = height;
-
 }
 
 }  // namespace lve

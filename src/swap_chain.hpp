@@ -6,6 +6,7 @@
 #include <vulkan/vulkan.h>
 
 // std lib headers
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -16,22 +17,19 @@ class SwapChain {
   static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
   SwapChain( Device&, VkExtent2D );
+  SwapChain( Device&, VkExtent2D, std::shared_ptr< SwapChain > );
   ~SwapChain();
 
   SwapChain( const SwapChain& ) = delete;
   SwapChain& operator=( const SwapChain& ) = delete;
 
   VkFramebuffer getFrameBuffer( int index ) {
-
     return swapChainFramebuffers[index];
-
   }
 
   float extentAspectRatio() {
-
     return static_cast< float >( swapChainExtent.width ) /
            static_cast< float >( swapChainExtent.height );
-
   }
 
   VkFormat findDepthFormat();
@@ -48,12 +46,15 @@ class SwapChain {
   uint32_t height() { return swapChainExtent.height; }
 
  private:
+  std::shared_ptr< SwapChain > oldSwapChain;
+
   void createSwapChain();
   void createImageViews();
   void createDepthResources();
   void createRenderPass();
   void createFramebuffers();
   void createSyncObjects();
+  void init();
 
   // Helper functions
   VkSurfaceFormatKHR chooseSwapSurfaceFormat(

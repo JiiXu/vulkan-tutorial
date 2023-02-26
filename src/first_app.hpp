@@ -17,7 +17,7 @@ class FirstApp {
   Window window{ width, height, "Hello Vulkan!" };
 
   Device device{ window };
-  SwapChain swapChain{ device, window.getExtent() };
+  std::unique_ptr< SwapChain > swapChain;
   std::unique_ptr< Model > model;
   std::unique_ptr< Pipeline > pipeline;
   VkPipelineLayout pipelineLayout;
@@ -32,6 +32,9 @@ class FirstApp {
   std::vector< Model::Triangle > sierpinskiSplit( Model::Triangle );
   std::vector< Model::Triangle > sierpinski(
       unsigned char, std::vector< Model::Triangle > );
+
+  void recreateSwapChain();
+  void recordCommandBuffer( int );
 
  public:
   FirstApp();

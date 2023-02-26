@@ -29,14 +29,26 @@ void Window::initWindow() {
   // do not create an OpenGL context
   glfwWindowHint( GLFW_CLIENT_API, GLFW_NO_API );
 
-  // set the window to not be resizable (as we will handle resizing ourselves)
-  glfwWindowHint( GLFW_RESIZABLE, GLFW_FALSE );
+  glfwWindowHint( GLFW_RESIZABLE, GLFW_TRUE );
 
   // create the window
   // note: the fourth parameter is for fullscreen, the fifth is related only to
   // OpenGL contexts
   window =
       glfwCreateWindow( width, height, windowName.c_str(), nullptr, nullptr );
+  glfwSetWindowUserPointer( window, this );
+  glfwSetFramebufferSizeCallback( window, framebufferResizeCallback );
+
+}
+
+void Window::framebufferResizeCallback(
+  GLFWwindow* window, int width, int height ) {
+
+  auto resizedWindow = static_cast< Window* >( glfwGetWindowUserPointer( window ) );
+  resizedWindow->windowResized = true;
+  resizedWindow->width = width;
+  resizedWindow->height = height;
+
 }
 
 }  // namespace lve

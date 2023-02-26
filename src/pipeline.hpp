@@ -45,8 +45,8 @@ class Pipeline {
       Device&, const std::string&, const std::string&,
       const PipelineConfigInfo& );
   ~Pipeline();
-  Pipeline( const Pipeline & ) = delete;
-  Pipeline& operator=( const Pipeline & ) = delete;
+  Pipeline( const Pipeline& ) = delete;
+  Pipeline& operator=( const Pipeline& ) = delete;
 
   static PipelineConfigInfo defaultPipelineConfigInfo( uint32_t, uint32_t );
   void bind( VkCommandBuffer );

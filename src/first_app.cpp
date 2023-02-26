@@ -7,28 +7,32 @@
 namespace lve {
 
 void FirstApp::run() {
+
   while ( !window.shouldClose() ) {
     glfwPollEvents();
     drawFrame();
-
-    // this line avoids having a crash on exit from the window should we close
-    // it during a renderPass
     vkDeviceWaitIdle( device.device() );
   }
+
 }
 
 FirstApp::FirstApp() {
+
   loadModels();
   createPipelineLayout();
-  createPipeline();
+  recreateSwapChain();
   createCommandBuffers();
+
 }
 
 FirstApp::~FirstApp() {
+
   vkDestroyPipelineLayout( device.device(), pipelineLayout, nullptr );
+
 }
 
 void FirstApp::createPipelineLayout() {
+
   VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
   pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
   pipelineLayoutInfo.setLayoutCount = 0;
@@ -44,23 +48,43 @@ void FirstApp::createPipelineLayout() {
            device.device(), &pipelineLayoutInfo, nullptr, &pipelineLayout ) !=
        VK_SUCCESS )
     throw std::runtime_error( "Failed to create pipeline layout" );
+
 }
 
 void FirstApp::createPipeline() {
+
   auto pipelineConfig = Pipeline::defaultPipelineConfigInfo(
-      swapChain.width(), swapChain.height() );
-  pipelineConfig.renderPass = swapChain.getRenderPass();
+      swapChain->width(), swapChain->height() );
+  pipelineConfig.renderPass = swapChain->getRenderPass();
   pipelineConfig.pipelineLayout = pipelineLayout;
 
   pipeline = std::make_unique< Pipeline >(
       device, "assets/shaders/simple_shader.vert.spv",
       "assets/shaders/simple_shader.frag.spv", pipelineConfig );
+
+}
+
+void FirstApp::recreateSwapChain() {
+
+  auto extent = window.getExtent();
+
+  while ( extent.width == 0 || extent.height == 0 ) {
+    extent = window.getExtent();
+    glfwWaitEvents();
+  }
+
+  vkDeviceWaitIdle( device.device() );
+  swapChain = nullptr;
+  swapChain = std::make_unique< SwapChain >( device, extent );
+  createPipeline();
+
 }
 
 void FirstApp::createCommandBuffers() {
+
   // resize the commandBuffers vector to have as many as we have framebuffers
   // (most probably 2 or 3)
-  commandBuffers.resize( swapChain.imageCount() );
+  commandBuffers.resize( swapChain->imageCount() );
 
   VkCommandBufferAllocateInfo allocInfo{};
   allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -80,19 +104,22 @@ void FirstApp::createCommandBuffers() {
            device.device(), &allocInfo, commandBuffers.data() ) != VK_SUCCESS )
     throw std::runtime_error( "failed to initialize commandbuffers" );
 
-  for ( int i = 0; i < commandBuffers.size(); ++i ) {
+}
+
+void FirstApp::recordCommandBuffer( int imageIndex ) {
+
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
-    if ( vkBeginCommandBuffer( commandBuffers[i], &beginInfo ) != VK_SUCCESS )
+    if ( vkBeginCommandBuffer( commandBuffers[imageIndex], &beginInfo ) != VK_SUCCESS )
       throw std::runtime_error( "command buffer failed to begin recording" );
 
     VkRenderPassBeginInfo renderPassInfo{};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassInfo.renderPass = swapChain.getRenderPass();
-    renderPassInfo.framebuffer = swapChain.getFrameBuffer( i );
+    renderPassInfo.renderPass = swapChain->getRenderPass();
+    renderPassInfo.framebuffer = swapChain->getFrameBuffer( imageIndex );
     renderPassInfo.renderArea.offset = { 0, 0 };
-    renderPassInfo.renderArea.extent = swapChain.getSwapChainExtent();
+    renderPassInfo.renderArea.extent = swapChain->getSwapChainExtent();
 
     std::array< VkClearValue, 2 > clearValues{};
     clearValues[0].color = { 0.f, 0.f, 0.f, 0.f };
@@ -106,35 +133,50 @@ void FirstApp::createCommandBuffers() {
     // VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS that signifies use of
     // secondary command buffers to execute secondary commands
     vkCmdBeginRenderPass(
-        commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE );
+        commandBuffers[imageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE );
 
-    pipeline->bind( commandBuffers[i] );
+    pipeline->bind( commandBuffers[imageIndex] );
 
-    model->bind( commandBuffers[i] );
-    model->draw( commandBuffers[i] );
+    model->bind( commandBuffers[imageIndex] );
+    model->draw( commandBuffers[imageIndex] );
 
-    vkCmdEndRenderPass( commandBuffers[i] );
+    vkCmdEndRenderPass( commandBuffers[imageIndex] );
 
-    if ( vkEndCommandBuffer( commandBuffers[i] ) != VK_SUCCESS )
+    if ( vkEndCommandBuffer( commandBuffers[imageIndex] ) != VK_SUCCESS )
       throw std::runtime_error( "failed to record command buffer" );
-  }
+
 }
 
 void FirstApp::drawFrame() {
+
   uint32_t imageIndex;
-  auto result = swapChain.acquireNextImage( &imageIndex );
+  auto result = swapChain->acquireNextImage( &imageIndex );
+
+  if ( result == VK_ERROR_OUT_OF_DATE_KHR ) {
+    recreateSwapChain();
+    return;
+  }
 
   if ( result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR )
     throw std::runtime_error( "failed to acquire swapchain image" );
 
-  result = swapChain.submitCommandBuffers(
+  recordCommandBuffer( imageIndex );
+  result = swapChain->submitCommandBuffers(
       &commandBuffers[imageIndex], &imageIndex );
+
+  if ( result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || window.wasResized() ) {
+    window.resetResizedFlag();
+    recreateSwapChain();
+    return;
+  }
 
   if ( result != VK_SUCCESS )
     throw std::runtime_error( "failed to submit command buffers" );
+
 }
 
 std::vector< Model::Triangle > FirstApp::sierpinskiSplit( Model::Triangle t ) {
+
   float ax = t.a.position.x;
   float ay = t.a.position.y;
   float bx = t.b.position.x;
@@ -161,6 +203,7 @@ std::vector< Model::Triangle > FirstApp::sierpinskiSplit( Model::Triangle t ) {
       { { bcx, bcy }, { 0.f, 1.f, 0.f } },
       { { cx, cy }, { 0.f, 0.f, 1.f } } }
   };
+
 }
 
 std::vector< Model::Triangle > FirstApp::sierpinski(

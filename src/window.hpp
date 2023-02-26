@@ -8,15 +8,19 @@
 namespace lve {
 
 class Window {
+
  private:
   void initWindow();
 
-  const int height;
-  const int width;
+  int height;
+  int width;
+  bool windowResized;
 
   std::string windowName;
 
   GLFWwindow* window;
+
+  static void framebufferResizeCallback( GLFWwindow*, int, int );
 
  public:
   Window( int, int, std::string );
@@ -25,12 +29,18 @@ class Window {
   Window& operator=( const Window& ) = delete;
 
   bool shouldClose() { return glfwWindowShouldClose( window ); }
+  bool wasResized() { return windowResized; }
+  void resetResizedFlag() { windowResized = false; }
+
   VkExtent2D getExtent() {
+
     return { static_cast< uint32_t >( width ),
              static_cast< uint32_t >( height ) };
+
   }
 
   void createWindowSurface( VkInstance, VkSurfaceKHR* );
+
 };
 
 }  // namespace lve

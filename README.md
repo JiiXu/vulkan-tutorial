@@ -46,9 +46,21 @@ In order for the program not to crash on resizing the window, a more robust swap
 
 This video was easier to follow, but my overview of the code is still pretty poor. I should probably sit down and go through it all at some point, but I keep feeling like the tutorial creator said we would do that in a video so I guess I'm waiting for that to happen in hopes of there being some visual aids to remind me what's been going on.
 
+## Video 10 - Push Constants
+Push constants are small but fast modifications to data such as vertices or colors, that can be used to e.g. quickly draw multiple copies of the same object. They have three sections:
+1. Stage Flags, that specify which part of the pipeline has access to the push constant
+2. Offset is the offset in bytes (must be multiple of 4)
+3. Size is the size of the push constant in bytes (must be multiple of 4)
+The Vulkan spec only guarantees 128 bytes of space shared between all shader stages.
+Only one push constant block can be specified per shader entry point, and the push constants must be very strictly aligned.
+
+One of the most common uses of push constants is to store transformation matrices.
+
+We drew multiple copies of our triangle and colored it a bit differently using push constants, and also created a small animation by updating the values of the push constant for each frame.
+
 ## Progress
 
-![](https://geps.dev/progress/30)
+![](https://geps.dev/progress/33)
 
 - [x] Video 1 - Introduction
 - [x] Video 2 - Graphics Pipeline Overview
@@ -59,7 +71,7 @@ This video was easier to follow, but my overview of the code is still pretty poo
 - [x] Video 7 - Vertex Buffers
 - [x] Video 8 - Fragment Interpolation
 - [x] Video 9 - Swap Chain Recreation & Dynamic Viewports
-- [ ] Video 10
+- [x] Video 10 - Push Constants
 - [ ] Video 11
 - [ ] Video 12
 - [ ] Video 13

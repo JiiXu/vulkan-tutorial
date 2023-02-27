@@ -1,8 +1,17 @@
 #include "first_app.hpp"
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <glm/glm.hpp>
+
 #include <array>
 #include <set>
 #include <stdexcept>
+
+struct SimplePushConstantData {
+  glm::vec2 offset;
+  alignas( 16 ) glm::vec3 color;
+};
 
 namespace lve {
 
@@ -26,6 +35,12 @@ FirstApp::~FirstApp() {
 }
 
 void FirstApp::createPipelineLayout() {
+  VkPushConstantRange pushConstantRange{};
+  pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+  pushConstantRange.offset = 0;
+  pushConstantRange.size = sizeof( SimplePushConstantData );
+
+
   VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
   pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
   pipelineLayoutInfo.setLayoutCount = 0;
@@ -34,8 +49,8 @@ void FirstApp::createPipelineLayout() {
   pipelineLayoutInfo.pSetLayouts = nullptr;
 
   // push constants are a way to send limited data to shader programs
-  pipelineLayoutInfo.pushConstantRangeCount = 0;
-  pipelineLayoutInfo.pPushConstantRanges = nullptr;
+  pipelineLayoutInfo.pushConstantRangeCount = 1;
+  pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 
   if ( vkCreatePipelineLayout(
            device.device(), &pipelineLayoutInfo, nullptr, &pipelineLayout ) !=
@@ -112,6 +127,10 @@ void FirstApp::createCommandBuffers() {
 }
 
 void FirstApp::recordCommandBuffer( int imageIndex ) {
+  static int frame = 0;
+  frame = ( frame + 1 ) % 1000;
+
+
   VkCommandBufferBeginInfo beginInfo{};
   beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
@@ -127,7 +146,7 @@ void FirstApp::recordCommandBuffer( int imageIndex ) {
   renderPassInfo.renderArea.extent = swapChain->getSwapChainExtent();
 
   std::array< VkClearValue, 2 > clearValues{};
-  clearValues[0].color = { 0.f, 0.f, 0.f, 0.f };
+  clearValues[0].color = { 0.01f, 0.01f, 0.01f, 1.f };
   clearValues[1].depthStencil = { 1.f, 0 };
   renderPassInfo.clearValueCount =
       static_cast< uint32_t >( clearValues.size() );
@@ -156,7 +175,17 @@ void FirstApp::recordCommandBuffer( int imageIndex ) {
   pipeline->bind( commandBuffers[imageIndex] );
 
   model->bind( commandBuffers[imageIndex] );
-  model->draw( commandBuffers[imageIndex] );
+
+  for ( int j = 0; j < 4; ++j ) {
+    SimplePushConstantData push{};
+    push.offset = { -0.5f + frame * 0.008, -0.4f + j * 0.25f };
+    push.color = { 0.f, 0.f, 0.2f + j * 0.2f };
+
+    vkCmdPushConstants( commandBuffers[imageIndex], pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof( SimplePushConstantData ), &push);
+
+    model->draw( commandBuffers[imageIndex] );
+  }
+
 
   vkCmdEndRenderPass( commandBuffers[imageIndex] );
 
@@ -237,8 +266,8 @@ std::vector< Model::Triangle > FirstApp::sierpinski(
 }
 
 void FirstApp::loadModels() {
+  /*
   std::vector< Model::Triangle > initialTriangle{
-
     { { { 0.f, -0.5f } }, { { 0.5f, 0.8f } }, { { -0.7f, 0.5f } } }
   };
 
@@ -254,6 +283,13 @@ void FirstApp::loadModels() {
 
     j += 3;
   }
+*/
+
+  std::vector< Model::Vertex > vertices{
+    {{ 0.f, 0.0f }},
+    {{ 0.5f, 0.7f }},
+    {{ -0.6f, 0.3f }}
+  };
 
   model = std::make_unique< Model >( device, vertices );
 }

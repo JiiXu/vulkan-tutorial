@@ -1,9 +1,9 @@
 #pragma once
 
-#include "device.hpp"
-
 #include <string>
 #include <vector>
+
+#include "device.hpp"
 
 namespace lve {
 

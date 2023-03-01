@@ -2,13 +2,14 @@
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include <glm/glm.hpp>
-
 #include <array>
+#include <glm/glm.hpp>
+#include <glm/gtc/constants.hpp>
 #include <set>
 #include <stdexcept>
 
 struct SimplePushConstantData {
+  glm::mat2 transform{ 1.f };
   glm::vec2 offset;
   alignas( 16 ) glm::vec3 color;
 };
@@ -24,7 +25,7 @@ void FirstApp::run() {
 }
 
 FirstApp::FirstApp() {
-  loadModels();
+  loadGameObjects();
   createPipelineLayout();
   recreateSwapChain();
   createCommandBuffers();
@@ -36,10 +37,10 @@ FirstApp::~FirstApp() {
 
 void FirstApp::createPipelineLayout() {
   VkPushConstantRange pushConstantRange{};
-  pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+  pushConstantRange.stageFlags =
+      VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
   pushConstantRange.offset = 0;
   pushConstantRange.size = sizeof( SimplePushConstantData );
-
 
   VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
   pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -59,8 +60,11 @@ void FirstApp::createPipelineLayout() {
 }
 
 void FirstApp::createPipeline() {
-  assert( swapChain != nullptr && "Cannot create pipeline before swap chain! ");
-  assert( pipelineLayout != nullptr && "Cannot create pipeline before pipeline layout!" );
+  assert(
+      swapChain != nullptr && "Cannot create pipeline before swap chain! " );
+  assert(
+      pipelineLayout != nullptr &&
+      "Cannot create pipeline before pipeline layout!" );
 
   PipelineConfigInfo pipelineConfig{};
   Pipeline::defaultPipelineConfigInfo( pipelineConfig );
@@ -85,9 +89,10 @@ void FirstApp::recreateSwapChain() {
   if ( swapChain == nullptr ) {
     swapChain = std::make_unique< SwapChain >( device, extent );
   } else {
-    swapChain = std::make_unique< SwapChain >( device, extent, std::move( swapChain ) );
+    swapChain =
+        std::make_unique< SwapChain >( device, extent, std::move( swapChain ) );
     if ( swapChain->imageCount() != commandBuffers.size() ) {
-      freeCommandBuffers(); 
+      freeCommandBuffers();
       createCommandBuffers();
     }
   }
@@ -98,7 +103,9 @@ void FirstApp::recreateSwapChain() {
 }
 
 void FirstApp::freeCommandBuffers() {
-  vkFreeCommandBuffers( device.device(), device.getCommandPool(), static_cast< float >( commandBuffers.size() ), commandBuffers.data() );
+  vkFreeCommandBuffers(
+      device.device(), device.getCommandPool(),
+      static_cast< float >( commandBuffers.size() ), commandBuffers.data() );
   commandBuffers.clear();
 }
 
@@ -127,10 +134,6 @@ void FirstApp::createCommandBuffers() {
 }
 
 void FirstApp::recordCommandBuffer( int imageIndex ) {
-  static int frame = 0;
-  frame = ( frame + 1 ) % 1000;
-
-
   VkCommandBufferBeginInfo beginInfo{};
   beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
@@ -172,25 +175,34 @@ void FirstApp::recordCommandBuffer( int imageIndex ) {
   vkCmdSetViewport( commandBuffers[imageIndex], 0, 1, &viewport );
   vkCmdSetScissor( commandBuffers[imageIndex], 0, 1, &scissor );
 
-  pipeline->bind( commandBuffers[imageIndex] );
-
-  model->bind( commandBuffers[imageIndex] );
-
-  for ( int j = 0; j < 4; ++j ) {
-    SimplePushConstantData push{};
-    push.offset = { -0.5f + frame * 0.008, -0.4f + j * 0.25f };
-    push.color = { 0.f, 0.f, 0.2f + j * 0.2f };
-
-    vkCmdPushConstants( commandBuffers[imageIndex], pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof( SimplePushConstantData ), &push);
-
-    model->draw( commandBuffers[imageIndex] );
-  }
-
+  renderGameObjects( commandBuffers[imageIndex] );
 
   vkCmdEndRenderPass( commandBuffers[imageIndex] );
 
   if ( vkEndCommandBuffer( commandBuffers[imageIndex] ) != VK_SUCCESS )
     throw std::runtime_error( "failed to record command buffer" );
+}
+
+void FirstApp::renderGameObjects( VkCommandBuffer commandBuffer ) {
+  pipeline->bind( commandBuffer );
+
+  for ( auto& object: gameObjects ) {
+    object.transform2d.rotation =
+        glm::mod( object.transform2d.rotation + 0.01f, glm::two_pi< float >() );
+
+    SimplePushConstantData push{};
+    push.offset = object.transform2d.translation;
+    push.color = object.color;
+    push.transform = object.transform2d.mat2();
+
+    vkCmdPushConstants(
+        commandBuffer, pipelineLayout,
+        VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
+        sizeof( SimplePushConstantData ), &push );
+
+    object.model->bind( commandBuffer );
+    object.model->draw( commandBuffer );
+  }
 }
 
 void FirstApp::drawFrame() {
@@ -265,7 +277,7 @@ std::vector< Model::Triangle > FirstApp::sierpinski(
   return sierpinski( depth - 1, out );
 }
 
-void FirstApp::loadModels() {
+void FirstApp::loadGameObjects() {
   /*
   std::vector< Model::Triangle > initialTriangle{
     { { { 0.f, -0.5f } }, { { 0.5f, 0.8f } }, { { -0.7f, 0.5f } } }
@@ -285,13 +297,19 @@ void FirstApp::loadModels() {
   }
 */
 
-  std::vector< Model::Vertex > vertices{
-    {{ 0.f, 0.0f }},
-    {{ 0.5f, 0.7f }},
-    {{ -0.6f, 0.3f }}
-  };
+  std::vector< Model::Vertex > vertices{ { { 0.f, -0.5f }, { 1.f, 0.f, 0.f } },
+                                         { { 0.5f, 0.5f }, { 0.f, 1.f, 0.f } },
+                                         { { -0.5f, 0.5f },
+                                           { 0.f, 0.f, 1.f } } };
 
-  model = std::make_unique< Model >( device, vertices );
+  auto model = std::make_shared< Model >( device, vertices );
+  auto triangle = GameObject::createGameObject();
+  triangle.model = model;
+  triangle.color = { 0.1f, 0.8f, 0.1f };
+  triangle.transform2d.translation.x = 0.2f;
+  triangle.transform2d.scale = { 2.f, 0.5f };
+  triangle.transform2d.rotation = 0.25f * glm::two_pi< float >();
+  gameObjects.push_back( std::move( triangle ) );
 }
 
 }  // namespace lve

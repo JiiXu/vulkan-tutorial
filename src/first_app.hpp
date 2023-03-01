@@ -1,12 +1,13 @@
 #pragma once
 
+#include <memory>
+#include <vector>
+
+#include "game_object.hpp"
 #include "model.hpp"
 #include "pipeline.hpp"
 #include "swap_chain.hpp"
 #include "window.hpp"
-
-#include <memory>
-#include <vector>
 
 namespace lve {
 
@@ -18,17 +19,18 @@ class FirstApp {
 
   Device device{ window };
   std::unique_ptr< SwapChain > swapChain;
-  std::unique_ptr< Model > model;
   std::unique_ptr< Pipeline > pipeline;
   VkPipelineLayout pipelineLayout;
   std::vector< VkCommandBuffer > commandBuffers;
+  std::vector< GameObject > gameObjects;
 
   void createPipelineLayout();
   void createPipeline();
   void createCommandBuffers();
   void freeCommandBuffers();
   void drawFrame();
-  void loadModels();
+  void loadGameObjects();
+  void renderGameObjects( VkCommandBuffer );
 
   std::vector< Model::Triangle > sierpinskiSplit( Model::Triangle );
   std::vector< Model::Triangle > sierpinski(

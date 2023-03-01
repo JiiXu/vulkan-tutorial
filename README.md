@@ -58,6 +58,9 @@ One of the most common uses of push constants is to store transformation matrice
 
 We drew multiple copies of our triangle and colored it a bit differently using push constants, and also created a small animation by updating the values of the push constant for each frame.
 
+## Video 11 - 2d Transformations
+We implemented a game object, and learned a little bit about how to pass transformation matrices to shaders. Again, I understand all of these concepts but the way they're presented without any periodic overview or reminders means I will have to go back and re-figure all of this out at least one more time.
+
 ## Progress
 
 ![](https://geps.dev/progress/33)
@@ -72,7 +75,7 @@ We drew multiple copies of our triangle and colored it a bit differently using p
 - [x] Video 8 - Fragment Interpolation
 - [x] Video 9 - Swap Chain Recreation & Dynamic Viewports
 - [x] Video 10 - Push Constants
-- [ ] Video 11
+- [x] Video 11 - 2d Transformations
 - [ ] Video 12
 - [ ] Video 13
 - [ ] Video 14

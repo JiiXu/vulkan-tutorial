@@ -63,7 +63,7 @@ We implemented a game object, and learned a little bit about how to pass transfo
 
 ## Progress
 
-![](https://geps.dev/progress/33)
+![](https://geps.dev/progress/37)
 
 - [x] Video 1 - Introduction
 - [x] Video 2 - Graphics Pipeline Overview
